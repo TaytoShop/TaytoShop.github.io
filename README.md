@@ -1,2 +1,0 @@
-# TaytoShop
-cuz fuck photoshop
