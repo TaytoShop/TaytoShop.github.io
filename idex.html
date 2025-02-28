@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaytoShop</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #2C3E50; /* Navy Blue */
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        
+        h1 {
+            margin-top: 30px;
+            font-size: 2em;
+        }
+
+        /* Canvas Container */
+        .canvas-container {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
+            margin-bottom: 40px;
+            max-width: 100%; /* Ensures responsiveness */
+            overflow: hidden; /* Prevents any overflow from canvas */
+        }
+
+        .layer-canvas {
+            position: relative;
+            top: 0;
+            left: 0;
+            border: 2px solid #34495E; /* Darker border */
+            background-color: #34495E; /* Darker background for canvas */
+            max-width: 100%; /* Prevents canvas from exceeding container width */
+        }
+
+        /* Control Panel Styling */
+        .controls {
+            margin-top: 20px;
+            background-color: #34495E;
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-block;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .controls label {
+            margin-right: 10px;
+            font-size: 1.1em;
+        }
+
+        .controls input[type="range"] {
+            width: 70%;
+            margin-bottom: 10px;
+            margin-right: 15px;
+            background-color: #1ABC9C; /* Teal-colored range */
+            border: none;
+            border-radius: 5px;
+        }
+
+        .controls input[type="number"], .controls input[type="color"] {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #34495E;
+            color: white;
+            border: 1px solid #1ABC9C;
+        }
+
+        .controls button {
+            padding: 10px 15px;
+            background-color: #1ABC9C; /* Teal Button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .controls button:hover {
+            background-color: #16A085; /* Darker Teal */
+        }
+
+        /* Input Fields */
+        input[type="file"] {
+            background-color: #1ABC9C;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover {
+            background-color: #16A085;
+        }
+
+        /* Button Styles */
+        button:focus {
+            outline: none;
+        }
+
+        input[type="number"], input[type="file"], input[type="range"], input[type="color"] {
+            font-size: 1em;
+            border: 1px solid #16A085;
+            background-color: #34495E;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        input[type="number"]:focus, input[type="range"]:focus, input[type="color"]:focus {
+            outline: 2px solid #1ABC9C;
+        }
+    </style>
+</head>
+<body>
+    <h1>TaytoShop</h1>
+    <input type="file" id="upload" accept="image/*">
+    <br>
+    <button id="createCanvas">Create Custom Canvas</button>
+    <input type="number" id="canvasWidth" placeholder="Width" min="100">
+    <input type="number" id="canvasHeight" placeholder="Height" min="100">
+    <br>
+    <div class="canvas-container">
+        <canvas id="backgroundCanvas" class="layer-canvas"></canvas>
+    </div>
+    <div class="controls">
+        <label>Brightness:</label>
+        <input type="range" id="brightness" min="0" max="200" value="100">
+        <label>Contrast:</label>
+        <input type="range" id="contrast" min="0" max="200" value="100">
+        <label>Grayscale:</label>
+        <input type="range" id="grayscale" min="0" max="100" value="0">
+        <br>
+        <label>Brush Size:</label>
+        <input type="range" id="brushSize" min="1" max="20" value="5">
+        <label>Brush Color:</label>
+        <input type="color" id="brushColor" value="#000000">
+        <br>
+        <label>File Name:</label>
+        <input type="text" id="fileName" placeholder="Enter file name">
+        <button id="download">Download</button>
+    </div>
+    <script>
+        const upload = document.getElementById('upload');
+        const canvasContainer = document.querySelector('.canvas-container');
+        const createCanvas = document.getElementById('createCanvas');
+        const canvasWidth = document.getElementById('canvasWidth');
+        const canvasHeight = document.getElementById('canvasHeight');
+        const brightness = document.getElementById('brightness');
+        const contrast = document.getElementById('contrast');
+        const grayscale = document.getElementById('grayscale');
+        const brushSize = document.getElementById('brushSize');
+        const brushColor = document.getElementById('brushColor');
+        const fileNameInput = document.getElementById('fileName');
+        const download = document.getElementById('download');
+        
+        let img = new Image();
+        let painting = false;
+
+        // Set up the initial canvas
+        const backgroundCanvas = document.getElementById('backgroundCanvas');
+        const ctx = backgroundCanvas.getContext('2d');
+        backgroundCanvas.width = 500;
+        backgroundCanvas.height = 500;
+
+        // Set up the drawing functionality
+        function startDrawing(event) {
+            painting = true;
+            ctx.beginPath();
+        }
+
+        function stopDrawing() {
+            painting = false;
+            ctx.beginPath();
+        }
+
+        function draw(event) {
+            if (!painting) return;
+            ctx.lineWidth = brushSize.value;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = brushColor.value;
+            ctx.lineTo(event.offsetX, event.offsetY);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(event.offsetX, event.offsetY);
+        }
+
+        // Handle the creation of custom canvas
+        createCanvas.addEventListener('click', () => {
+            let width = parseInt(canvasWidth.value) || 500;
+            let height = parseInt(canvasHeight.value) || 500;
+
+            backgroundCanvas.width = width;
+            backgroundCanvas.height = height;
+            ctx.clearRect(0, 0, backgroundCanvas.width, backgroundCanvas.height); // Clear only when creating a new canvas
+        });
+
+        // Handle the image upload
+        upload.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0, backgroundCanvas.width, backgroundCanvas.height);
+        };
+
+        // Apply filters to the canvas
+        function applyFilters() {
+            ctx.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%) grayscale(${grayscale.value}%)`;
+            ctx.clearRect(0, 0, backgroundCanvas.width, backgroundCanvas.height); // Clear before applying the filter
+            ctx.drawImage(img, 0, 0, backgroundCanvas.width, backgroundCanvas.height);
+        }
+
+        brightness.addEventListener('input', applyFilters);
+        contrast.addEventListener('input', applyFilters);
+        grayscale.addEventListener('input', applyFilters);
+
+        // Initialize drawing
+        backgroundCanvas.addEventListener('mousedown', startDrawing);
+        backgroundCanvas.addEventListener('mouseup', stopDrawing);
+        backgroundCanvas.addEventListener('mousemove', draw);
+
+        // Allow download of the image with custom file name
+        download.addEventListener('click', () => {
+            const fileName = fileNameInput.value || 'drawing'; // Default file name if not provided
+            const dataURL = backgroundCanvas.toDataURL();
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = `${fileName}.png`; // Use custom file name with .png extension
+            link.click();
+        });
+    </script>
+</body>
+</html>
