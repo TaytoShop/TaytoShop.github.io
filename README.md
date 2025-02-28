@@ -1,2 +1,2 @@
-# TaytoShop.github.io
+# TaytoShop
 cuz fuck photoshop
