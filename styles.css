@@ -1,0 +1,68 @@
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+/* Top bar containing logo and website name */
+.top-bar {
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+    color: white;
+}
+
+.logo {
+    width: 40px; /* Adjust logo size */
+    height: 40px; /* Adjust logo size */
+    margin-right: 15px; /* Space between the logo and name */
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin: 0;
+    font-family: 'Sofia', cursive; /* Apply Sofia font */
+    color: #fff;
+}
+
+/* Container styles */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.toolbar {
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+canvas {
+    border: 2px solid black;
+    background: white;
+    cursor: crosshair;
+}
+
+/* Button styles */
+button {
+    padding: 5px 10px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #0056b3;
+}
